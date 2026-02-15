@@ -4,6 +4,9 @@ class LocalIframe extends HTMLElement {
   /** @type {HTMLIFrameElement} */
   #iframe;
 
+  /** Fix for double render on initial load when certain attributes are initialized that should also influence the rendering */
+  #shouldRenderOnAttributeChange = false;
+
   constructor() {
     super();
     this.#iframe = document.createElement("iframe");
@@ -15,14 +18,13 @@ class LocalIframe extends HTMLElement {
 
   /** @param {string} description */
   set description(description) {
-    console.log('setting title to ' + description);
     if (description) {
       this.#iframe.setAttribute("title", description);
     } else {
       this.#iframe.removeAttribute("title");
     }
   }
-
+  
   /**
    * A description to set as the `title` attribute of the underlying `iframe`. 
    * @returns {string|null}
@@ -31,13 +33,21 @@ class LocalIframe extends HTMLElement {
     return this.#iframe.getAttribute("title");
   }
 
+  /** @param {string} id */
+  set template(id) {
+    this.setAttribute("template", id);
+  }
+
+  /**
+   * The ID of the template to use as the source content of the underlying `iframe`.
+   * @returns {string|null}
+   */
+  get template() {
+    return this.getAttribute("template");
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
-    // NOTE: Prevent render running twice on initial mount when the template attribute is set for the first time.
-    if (
-      name === "template" &&
-      oldValue !== null &&
-      this.isConnected
-    ) {
+    if (name === "template" && this.#shouldRenderOnAttributeChange) {
       this.#render();
     }
 
@@ -72,6 +82,8 @@ class LocalIframe extends HTMLElement {
       .join("");
 
     this.#iframe.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8">${css}</head><body>${html}${js}</body></html>`;
+
+    this.#shouldRenderOnAttributeChange = true;
   }
 
   connectedCallback() {

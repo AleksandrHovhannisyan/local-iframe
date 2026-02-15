@@ -33,13 +33,6 @@ Or include it via CDN:
 ></script>
 ```
 
-## Use Cases
-
-I wanted to be able to declaratively render fully local, isolated code demos in my tutorials, without embedding third-party Codepens/sandboxes and without creating separate pages for each code demo. This web component uses the [`HTMLIFrameElement.srcdoc`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/srcdoc) attribute to do just that.
-
-> [!NOTE]
-> This originally began as an Eleventy plugin: [eleventy-plugin-code-demo](github.com/AleksandrHovhannisyan/eleventy-plugin-code-demo).
-
 ## Example Usage
 
 There are two ways to define the markup for your iframe:
@@ -100,6 +93,13 @@ Alternatively, you can define an external `<template>` and reference it via the 
 
 If the `template` attribute changes, the frame will update its markup with the content of the new template.
 
+## API
+
+| Attribute     | Type     | Description                                                                      |
+| ------------- | -------- | -------------------------------------------------------------------------------- |
+| `template`    | `string` | The ID of the `<template>` element to use for the underlying `iframe`'s content. |
+| `description` | `string` | A `title` to set on the underlying `iframe`, for improved accessibility.         |
+
 ## Recommended Styling
 
 Frames will be initially empty until their content is hydrated. This can cause unwanted vertical layout shifts as the page loads. To fix this, you can reserve an explicit `height` on each frame with inline styles:
@@ -130,6 +130,13 @@ local-iframe {
 + max-width: 100%;
 }
 ```
+
+## Use Cases
+
+I wanted to be able to declaratively render fully local, isolated code demos in my tutorials, without embedding third-party Codepens/sandboxes and without creating separate pages for each code demo. This web component uses the [`HTMLIFrameElement.srcdoc`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/srcdoc) attribute to do just that.
+
+> [!NOTE]
+> This originally began as an Eleventy plugin: [eleventy-plugin-code-demo](github.com/AleksandrHovhannisyan/eleventy-plugin-code-demo).
 
 ## Local Development
 

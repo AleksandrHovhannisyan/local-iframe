@@ -100,10 +100,9 @@
     <script>
       const frame = document.querySelector("#dynamic-frame");
       setInterval(() => {
-        const currentTemplate = frame.getAttribute("template");
-        const newTemplate =
-          currentTemplate === "template-1" ? "template-2" : "template-1";
-        frame.setAttribute("template", newTemplate);
+        frame.template =
+          frame.template === "template-1" ? "template-2" : "template-1";
+          frame.description = `Frame demo for ${frame.template}`;
       }, 1000);
     </script>
   </body>
