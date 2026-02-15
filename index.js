@@ -1,8 +1,8 @@
 class LocalIframe extends HTMLElement {
   static observedAttributes = ['template'];
 
+  /** @type {HTMLIFrameElement} */
   #iframe;
-  #hasMounted = false;
 
   constructor() {
     super();
@@ -13,16 +13,14 @@ class LocalIframe extends HTMLElement {
     this.appendChild(this.#iframe);
   }
 
-  attributeChangedCallback(name, oldValue, ) {
-    if (name === 'template') {
-      this.connectedCallback();
+  attributeChangedCallback(name, oldValue, newValue) {
+    // NOTE: Prevent render running twice on initial mount when the template attribute is set for the first time.
+    if (name === 'template' && oldValue !== null && oldValue !== newValue && this.isConnected) {
+      this.#render();
     }
   }
 
-  connectedCallback() {
-    if (this.#hasMounted) return;
-    this.#hasMounted = true;
-
+  #render() {
     const templateId = this.getAttribute('template');
     const template = templateId ? document.getElementById(templateId) : this.querySelector('template');
 
@@ -37,6 +35,10 @@ class LocalIframe extends HTMLElement {
     const js = Array.from(template.content.querySelectorAll('script')).map((js) => js.outerHTML).join('');
 
     this.#iframe.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8">${css}</head><body>${html}${js}</body></html>`;
+  }
+
+  connectedCallback() {
+    this.#render();
   }
 }
 
