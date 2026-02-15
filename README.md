@@ -34,14 +34,14 @@ I wanted to be able to declaratively render fully local, isolated code demos in 
 
 There are two ways to define the markup for your iframe:
 
-- Render a `<template>` as a child of `<local-iframe>`
-- Define the `<template>` externally and set `template="id-of-your-template"`
+1. Render a `<template>` as a child of `<local-iframe>`
+2. Define the `<template>` externally and set `template="id-of-your-template"`
 
 In both cases, the component will duplicate the content of the template and render it in a local iframe.
 
 Any styles and scripts will only affect elements within the iframe itself.
 
-### Child Template
+### 1. Child Template
 
 The simplest way to use `local-iframe` is to render a `<template>` as a child:
 
@@ -75,7 +75,7 @@ In this example, we render a template with:
 > [!TIP]
 > To prevent layout shifts when the page loads, set inline styles on the host element and assign it a width and height. The inner `iframe` will fill that space responsively, shrinking or growing as needed.
 
-### Template Attribute
+### 2. Template Attribute
 
 Alternatively, you can define an external `<template>` and reference it via the `template` attribute, like so:
 
