@@ -1,17 +1,17 @@
 # `local-iframe`
 
-> A web component that renders templates in a local `<iframe>`.
+> Web component that allows you to render a fully local `<iframe>` using HTML templates.
 
 ## Table of Contents
 
 - [Getting Started](#getting-started)
-- [Use Cases](#use-cases)
 - [Example Usage](#example-usage)
   - [1. Child Template](#1-child-template)
   - [2. Template Attribute](#2-template-attribute)
   - [Custom iframe](#custom-iframe)
+  - [Recommended Styling](#recommended-styling)
 - [API](#api)
-- [Recommended Styling](#recommended-styling)
+- [Use Cases](#use-cases)
 - [Local Development](#local-development)
 
 ## Getting Started
@@ -35,16 +35,44 @@ Or include it via CDN:
 ></script>
 ```
 
+Then, render it in your document, and define all of the markup for the `iframe` inside a `<template>`:
+
+```html
+<local-iframe>
+  <template>
+    <h1>Hello from the iframe</h1>
+    <script>
+      console.log("Isolated scripts");
+    </script>
+    <style>
+      /* This only affects the iframe */
+      body {
+        background-color: red;
+      }
+    </style>
+  </template>
+</local-iframe>
+```
+
+The component willy copy this template and render a fully local `iframe` with this exact HTML, including CSS and JavaScript, producing the following output:
+
+```html
+<local-iframe>
+  <template></template>
+  <iframe srcdoc="whatever html content you specified in the template"></iframe>
+</local-iframe>
+```
+
+All styles and scripts will only affect elements within the iframe itself.
+
+See [example usage](#example-usage).
+
 ## Example Usage
 
 There are two ways to define the markup for your iframe:
 
-1. Render a `<template>` as a child of `<local-iframe>`
-2. Define the `<template>` externally and set `template="id-of-your-template"`
-
-In both cases, the component will duplicate the content of the template and render it in a local iframe.
-
-Any styles and scripts will only affect elements within the iframe itself.
+1. Render a `<template>` as a child of `<local-iframe>`.
+2. Render a `<template>` externally and reference it by ID.
 
 ### 1. Child Template
 
@@ -53,73 +81,72 @@ The simplest way to use `local-iframe` is to render a `<template>` as a child:
 ```html
 <local-iframe description="Hello world demo of a local iframe">
   <template>
-    <div><h1>Hello, world!</h1></div>
-    <p>This is awesome!</p>
+    <h1>Counter demo</h1>
+    <button>Increment</button>
+    <div>Count: <output>0</output></div>
     <script>
-      console.log("hi");
-    </script>
-    <script>
-      console.log("second console log in same iframe, but a second script tag");
+      const button = document.querySelector("button");
+      const output = document.querySelector("output");
+      button.addEventListener("click", () => {
+        output.innerHTML = parseInt(output.innerHTML, 10) + 1;
+      });
     </script>
     <style>
-      body {
-        background-color: red;
-        font-size: 200%;
+      button {
+        padding: 8px;
+        background-color: transparent;
       }
     </style>
   </template>
 </local-iframe>
 ```
 
-In this example, we render a template with:
-
-- Some HTML tags for the iframe's markup
-- Two scripts to execute within the iframe's context
-- Styles to apply within to elements within the iframe
+In this example, we render a counter inside an iframe and add some event listeners to make it interactive and some basic CSS to style it.
 
 ### 2. Template Attribute
 
 Alternatively, you can define an external `<template>` and reference it via the `template` attribute, like so:
 
 ```html
-<template id="template-1" description="Hello world demo of a local iframe">
-  <h1>Template 1</h1>
+<template id="my-template">
+  <h1>Template</h1>
   <style>
     h1 {
       color: red;
     }
   </style>
 </template>
-<local-iframe template="template-1"></local-iframe>
+<local-iframe
+  template="my-template"
+  description="External template demo"
+></local-iframe>
 ```
 
-If the `template` attribute changes, the frame will update its markup with the content of the new template.
+If you change the `template` attribute, the underlying iframe will re-render with the new markup.
 
 ### Custom `iframe`
 
-By default, `local-iframe` will append an `iframe` to its subtree.
+By default, `local-iframe` appends an `iframe` to its subtree:
+
+```html
+<local-iframe>
+  <template></template>
+  <!-- The component adds this automatically for you -->
+  <iframe srcdoc="..."></iframe>
+</local-iframe>
+```
 
 Optionally, you may render a custom `iframe`, and that will get used instead:
 
 ```html
 <local-iframe>
-  <!-- Render this content in the iframe below -->
-  <template>
-    <h1>Hello world</h1>
-  </template>
-  <!-- This iframe will get used instead of the default -->
+  <template></template>
+  <!-- We'll use this iframe instead of inserting a new one -->
   <iframe style="border: solid 1px red"></iframe>
 </local-iframe>
 ```
 
-## API
-
-| Attribute     | Type     | Description                                                                      |
-| ------------- | -------- | -------------------------------------------------------------------------------- |
-| `template`    | `string` | The ID of the `<template>` element to use for the underlying `iframe`'s content. |
-| `description` | `string` | A `title` to set on the underlying `iframe`, for improved accessibility.         |
-
-## Recommended Styling
+### Recommended Styling
 
 Frames will be initially empty until their content is hydrated. This can cause unwanted vertical layout shifts as the page loads. To fix this, you can reserve an explicit `height` on each frame with inline styles:
 
@@ -149,6 +176,13 @@ local-iframe {
 + max-width: 100%;
 }
 ```
+
+## API
+
+| Attribute     | Type     | Description                                                                      |
+| ------------- | -------- | -------------------------------------------------------------------------------- |
+| `template`    | `string` | The ID of the `<template>` element to use for the underlying `iframe`'s content. |
+| `description` | `string` | A `title` to set on the underlying `iframe`, for improved accessibility.         |
 
 ## Use Cases
 
