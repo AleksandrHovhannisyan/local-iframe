@@ -4,10 +4,14 @@
 
 ## Getting Started
 
-Install the package:
+You may either install and import the package:
 
 ```sh
 npm install local-iframe
+```
+
+```js
+import "local-iframe";
 ```
 
 Or include it via CDN:
@@ -15,7 +19,7 @@ Or include it via CDN:
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/local-iframe@version/index.js"
+  src="https://cdn.jsdelivr.net/npm/local-iframe@1.0.0/index.js"
 ></script>
 ```
 
