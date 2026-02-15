@@ -9,11 +9,14 @@ class LocalIframe extends HTMLElement {
 
   constructor() {
     super();
-    this.#iframe = document.createElement("iframe");
+    const existingIframe = this.querySelector("iframe");
+    this.#iframe = existingIframe ? existingIframe : document.createElement("iframe");
     this.#iframe.style.height = "100%";
     this.#iframe.style.width = "100%";
     this.#iframe.style.maxWidth = "100%";
-    this.appendChild(this.#iframe);
+    if (!existingIframe) {
+      this.appendChild(this.#iframe);
+    }
   }
 
   /** @param {string} description */

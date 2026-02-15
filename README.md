@@ -49,7 +49,7 @@ Any styles and scripts will only affect elements within the iframe itself.
 The simplest way to use `local-iframe` is to render a `<template>` as a child:
 
 ```html
-<local-iframe>
+<local-iframe description="Hello world demo of a local iframe">
   <template>
     <div><h1>Hello, world!</h1></div>
     <p>This is awesome!</p>
@@ -80,7 +80,7 @@ In this example, we render a template with:
 Alternatively, you can define an external `<template>` and reference it via the `template` attribute, like so:
 
 ```html
-<template id="template-1">
+<template id="template-1" description="Hello world demo of a local iframe">
   <h1>Template 1</h1>
   <style>
     h1 {
@@ -92,6 +92,23 @@ Alternatively, you can define an external `<template>` and reference it via the 
 ```
 
 If the `template` attribute changes, the frame will update its markup with the content of the new template.
+
+### Custom `iframe`
+
+By default, `local-iframe` will append an `iframe` to its subtree.
+
+Optionally, you may render a custom `iframe`, and that will get used instead:
+
+```html
+<local-iframe>
+  <!-- Render this content in the iframe below -->
+  <template>
+    <h1>Hello world</h1>
+  </template>
+  <!-- This iframe will get used instead of the default -->
+  <iframe style="border: solid 1px red"></iframe>
+</local-iframe>
+```
 
 ## API
 
