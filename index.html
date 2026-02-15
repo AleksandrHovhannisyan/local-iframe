@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <script type="module" src="./index.js"></script>
@@ -28,17 +28,30 @@
       </style>
     </template>
     <h1><code>local-iframe</code> web component</h1>
-    <local-iframe style="width: 800px; height: 200px;" template="template-1" id="dynamic-frame"></local-iframe>
-    <local-iframe style="width: 800px; height: 400px;">
+    <local-iframe
+      description="Dynamic iframe example"
+      template="template-1"
+      id="dynamic-frame"
+      style="width: 800px; height: 200px"
+    ></local-iframe>
+    <local-iframe
+      description="Static iframe example"
+      style="width: 800px; height: 400px"
+    >
       <template>
-        <link href="https://fonts.googleapis.com/css2?family=Ruge+Boogie&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
+        <link
+          href="https://fonts.googleapis.com/css2?family=Ruge+Boogie&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap"
+          rel="stylesheet"
+        />
         <div><h1>Hello, world!</h1></div>
         <p>This is awesome!</p>
         <script>
-          console.log('hi');
+          console.log("hi");
         </script>
         <script>
-          console.log('second console log in same iframe, but a second script tag');
+          console.log(
+            "second console log in same iframe, but a second script tag",
+          );
         </script>
         <style>
           body {
@@ -49,23 +62,21 @@
         </style>
       </template>
     </local-iframe>
-    <local-iframe style="width: 800px; height: 200px;">
+    <local-iframe style="width: 800px; height: 200px">
       <template>
-		    <h1>Counter demo</h1>
+        <h1>Counter demo</h1>
         <button>Increment</button>
-        <div>
-          Count: <output>0</output>
-        </div>
+        <div>Count: <output>0</output></div>
         <script>
-          const button = document.querySelector('button');
-          const output = document.querySelector('output');
-          button.addEventListener('click', () => {
+          const button = document.querySelector("button");
+          const output = document.querySelector("output");
+          button.addEventListener("click", () => {
             output.innerHTML = parseInt(output.innerHTML, 10) + 1;
           });
         </script>
       </template>
     </local-iframe>
-    <local-iframe style="width: 800px; height: 200px;">
+    <local-iframe style="width: 800px; height: 200px">
       <template>
         <h1>Another one! This one has a blue background.</h1>
         <style>
@@ -87,11 +98,12 @@
     <p>Paragraph from outer document!</p>
     <p>Paragraph from outer document!</p>
     <script>
-      const frame = document.querySelector('#dynamic-frame');
+      const frame = document.querySelector("#dynamic-frame");
       setInterval(() => {
-        const currentTemplate = frame.getAttribute('template');
-        const newTemplate = currentTemplate === 'template-1' ? 'template-2' : 'template-1';
-        frame.setAttribute('template', newTemplate);
+        const currentTemplate = frame.getAttribute("template");
+        const newTemplate =
+          currentTemplate === "template-1" ? "template-2" : "template-1";
+        frame.setAttribute("template", newTemplate);
       }, 1000);
     </script>
   </body>
