@@ -122,12 +122,12 @@ You may also set an explicit width, although doing so is optional:
 <local-iframe style="width: 800px; height: 400px;"></local-iframe>
 ```
 
-If you do choose to set an explicit width, make sure you also add the following CSS to prevent horizontal overflow on narrower devices:
+If you do choose to set an explicit width, make sure you also set a `max-width` to prevent horizontal overflow on narrower devices:
 
-```css
+```diff
 local-iframe {
   display: block;
-  max-width: 100%;
++ max-width: 100%;
 }
 ```
 
