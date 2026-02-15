@@ -2,6 +2,16 @@
 
 > A web component that renders templates in a local `<iframe>`.
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Use Cases](#use-cases)
+- [Example Usage](#example-usage)
+  - [1. Child Template](#1-child-template)
+  - [2. Template Attribute](#2-template-attribute)
+- [Recommended Styling](#recommended-styling)
+- [Local Development](#local-development)
+
 ## Getting Started
 
 You may either install and import the package:
@@ -120,3 +130,10 @@ local-iframe {
   max-width: 100%;
 }
 ```
+
+## Local Development
+
+1. Clone this repo.
+2. Run `pnpm install` to install dev dependencies (Vite).
+3. Run `pnpm run dev` to start the local dev server.
+4. Open http://localhost:5173 in your browser.
