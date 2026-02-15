@@ -9,6 +9,8 @@
 - [Example Usage](#example-usage)
   - [1. Child Template](#1-child-template)
   - [2. Template Attribute](#2-template-attribute)
+  - [Custom iframe](#custom-iframe)
+- [API](#api)
 - [Recommended Styling](#recommended-styling)
 - [Local Development](#local-development)
 
