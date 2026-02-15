@@ -46,7 +46,7 @@ Any styles and scripts will only affect elements within the iframe itself.
 The simplest way to use `local-iframe` is to render a `<template>` as a child:
 
 ```html
-<local-iframe style="width: 800px; height: 400px;">
+<local-iframe>
   <template>
     <div><h1>Hello, world!</h1></div>
     <p>This is awesome!</p>
@@ -72,9 +72,6 @@ In this example, we render a template with:
 - Two scripts to execute within the iframe's context
 - Styles to apply within to elements within the iframe
 
-> [!TIP]
-> To prevent layout shifts when the page loads, set inline styles on the host element and assign it a width and height. The inner `iframe` will fill that space responsively, shrinking or growing as needed.
-
 ### 2. Template Attribute
 
 Alternatively, you can define an external `<template>` and reference it via the `template` attribute, like so:
@@ -92,3 +89,34 @@ Alternatively, you can define an external `<template>` and reference it via the 
 ```
 
 If the `template` attribute changes, the frame will update its markup with the content of the new template.
+
+## Recommended Styling
+
+Frames will be initially empty until their content is hydrated. This can cause unwanted vertical layout shifts as the page loads. To fix this, you can reserve an explicit `height` on each frame with inline styles:
+
+```html
+<local-iframe style="height: 400px;"></local-iframe>
+```
+
+You will need to treat `local-iframe`s as block elements for this to work, preferably with [inline critical styles](https://web.dev/articles/extract-critical-css) in the head of your document:
+
+```css
+local-iframe {
+  display: block;
+}
+```
+
+You may also set an explicit width, although doing so is optional:
+
+```html
+<local-iframe style="width: 800px; height: 400px;"></local-iframe>
+```
+
+If you do choose to set an explicit width, make sure you also add the following CSS to prevent horizontal overflow on narrower devices:
+
+```css
+local-iframe {
+  display: block;
+  max-width: 100%;
+}
+```
