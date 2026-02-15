@@ -2,6 +2,7 @@ class LocalIframe extends HTMLElement {
   static observedAttributes = ['template'];
 
   #iframe;
+  #hasMounted = false;
 
   constructor() {
     super();
@@ -19,6 +20,9 @@ class LocalIframe extends HTMLElement {
   }
 
   connectedCallback() {
+    if (this.#hasMounted) return;
+    this.#hasMounted = true;
+
     const templateId = this.getAttribute('template');
     const template = templateId ? document.getElementById(templateId) : this.querySelector('template');
 
