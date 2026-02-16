@@ -31,12 +31,12 @@ import { LocalIframe } from "local-iframe/LocalIframe";
 window.customElements.define("code-sandbox", LocalIframe);
 ```
 
-Or include it via CDN:
+Or include it via CDN as an ES Module:
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/local-iframe@2.0.1"
+  src="https://cdn.jsdelivr.net/npm/local-iframe@2.0.2/+esm"
 ></script>
 ```
 
