@@ -1,17 +1,17 @@
 # `local-iframe`
 
-> Web component that allows you to render a fully local `<iframe>` using HTML templates.
+> Web component that allows you to render local code sandboxes using iframes and HTML templates.
 
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+- [Use Cases](#use-cases)
 - [Example Usage](#example-usage)
   - [1. Child Template](#1-child-template)
   - [2. Template Attribute](#2-template-attribute)
   - [Custom iframe](#custom-iframe)
   - [Recommended Styling](#recommended-styling)
 - [API](#api)
-- [Use Cases](#use-cases)
 - [Local Development](#local-development)
 
 ## Getting Started
@@ -31,7 +31,7 @@ Or include it via CDN:
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/local-iframe@1.1.0/index.js"
+  src="https://cdn.jsdelivr.net/npm/local-iframe@1.2.0/index.js"
 ></script>
 ```
 
@@ -54,12 +54,26 @@ Then, render it in your document, and define all of the markup for the `iframe` 
 </local-iframe>
 ```
 
-The component willy copy this template and render a fully local `iframe` with this exact HTML, including CSS and JavaScript, producing the following output:
+`local-iframe` will copy that inner template and render a fully local `iframe` with this exact HTML, including CSS and JavaScript, producing the following output:
 
 ```html
 <local-iframe>
-  <template></template>
-  <iframe srcdoc="whatever html content you specified in the template"></iframe>
+  <template><!-- omitted for brevity --></template>
+  <iframe
+    srcdoc='&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;/head&gt;&lt;body&gt;
+    &lt;h1&gt;Hello from the iframe&lt;/h1&gt;
+    &lt;script&gt;
+      console.log("Isolated scripts");
+    &lt;/script&gt;
+    &lt;style&gt;
+      /* This only affects the iframe */
+      body {
+        background-color: red;
+      }
+    &lt;/style&gt;
+  &lt;/body&gt;&lt;/html&gt;'
+    style="height: 100%; width: 100%; max-width: 100%;"
+  ></iframe>
 </local-iframe>
 ```
 
@@ -67,12 +81,24 @@ All styles and scripts will only affect elements within the iframe itself.
 
 See [example usage](#example-usage).
 
+## Use Cases
+
+When writing web development tutorials, I sometimes want to allow my readers to interact with code demos or see some output. It's easy to do this with a service like Codepen, but I don't like the idea of having to maintain my code demos outside my blog on a third-party website and then embedding them in my Markdown, which often loads a lot of extra JavaScript that I don't need.
+
+Instead, `local-iframe` uses the [`HTMLIFrameElement.srcdoc`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/srcdoc) attribute to create a fully self-contained `iframe` based on whatever code you give it, right there in your page. What you see is what you get.
+
+> [!NOTE]
+> This originally began as an Eleventy plugin: [eleventy-plugin-code-demo](https://github.com/AleksandrHovhannisyan/eleventy-plugin-code-demo).
+
+> [!TIP]
+> See also: ["Building HTML, CSS, and JS code preview using iframe's srcdoc attribute"](https://mionskowski.pl/posts/iframe-code-preview/) by Maciej Mionskowski, which is what originally inspired me to poke around and see how far I could take this idea.
+
 ## Example Usage
 
 There are two ways to define the markup for your iframe:
 
 1. Render a `<template>` as a child of `<local-iframe>`.
-2. Render a `<template>` externally and reference it by ID.
+2. Render a `<template>` elsewhere in the DOM and reference it by ID.
 
 ### 1. Child Template
 
@@ -183,13 +209,6 @@ local-iframe {
 | ------------- | -------- | -------------------------------------------------------------------------------- |
 | `template`    | `string` | The ID of the `<template>` element to use for the underlying `iframe`'s content. |
 | `description` | `string` | A `title` to set on the underlying `iframe`, for improved accessibility.         |
-
-## Use Cases
-
-I wanted to be able to declaratively render fully local, isolated code demos in my tutorials, without embedding third-party Codepens/sandboxes and without creating separate pages for each code demo. This web component uses the [`HTMLIFrameElement.srcdoc`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/srcdoc) attribute to do just that.
-
-> [!NOTE]
-> This originally began as an Eleventy plugin: [eleventy-plugin-code-demo](github.com/AleksandrHovhannisyan/eleventy-plugin-code-demo).
 
 ## Local Development
 

@@ -1,4 +1,4 @@
-class LocalIframe extends HTMLElement {
+export class LocalIframe extends HTMLElement {
   static observedAttributes = ["description", "template"];
 
   /** @type {HTMLIFrameElement} */
@@ -10,7 +10,8 @@ class LocalIframe extends HTMLElement {
   constructor() {
     super();
     const existingIframe = this.querySelector("iframe");
-    this.#iframe = existingIframe ? existingIframe : document.createElement("iframe");
+    this.#iframe = existingIframe ?? document.createElement("iframe");
+    // Ensure the iframe fills the host element
     this.#iframe.style.height = "100%";
     this.#iframe.style.width = "100%";
     this.#iframe.style.maxWidth = "100%";
@@ -61,6 +62,7 @@ class LocalIframe extends HTMLElement {
 
   #render() {
     const templateId = this.getAttribute("template");
+
     const template = templateId
       ? document.getElementById(templateId)
       : this.querySelector("template");
@@ -68,23 +70,11 @@ class LocalIframe extends HTMLElement {
     if (!template) {
       throw new Error("No <template> found for local-iframe element.");
     }
+    if (!(template instanceof HTMLTemplateElement)) {
+      throw new Error("The element with the specified template ID is not a <template>.");
+    }
 
-    const html = Array.from(template.content.children)
-      .filter(
-        (child) =>
-          child.tagName.toLowerCase() !== "style" &&
-          child.tagName.toLowerCase() !== "script",
-      )
-      .map((html) => html.outerHTML)
-      .join("");
-    const css = Array.from(template.content.querySelectorAll("style"))
-      .map((css) => css.outerHTML)
-      .join("");
-    const js = Array.from(template.content.querySelectorAll("script"))
-      .map((js) => js.outerHTML)
-      .join("");
-
-    this.#iframe.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8">${css}</head><body>${html}${js}</body></html>`;
+    this.#iframe.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${template.innerHTML}</body></html>`;
 
     this.#shouldRenderOnAttributeChange = true;
   }
