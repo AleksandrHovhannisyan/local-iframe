@@ -83,5 +83,3 @@ export class LocalIframe extends HTMLElement {
     this.#render();
   }
 }
-
-window.customElements.define("local-iframe", LocalIframe);

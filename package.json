@@ -2,18 +2,20 @@
   "name": "local-iframe",
   "version": "1.2.0",
   "type": "module",
-  "main": "./index.js",
+  "main": "./src/index.js",
   "exports": {
-    ".": "./index.js"
+    ".": "./src/index.js",
+    "./LocalIframe": "./src/LocalIframe.js"
   },
-  "description": "A web component that renders templates in a local `<iframe>`",
+  "description": "Web component that allows you to render local code sandboxes using iframes and HTML templates.",
   "keywords": [
     "iframe",
     "local sandbox",
     "code demo"
   ],
   "files": [
-    "./index.js",
+    "./src/index.js",
+    "./src/LocalIframe.js",
     "README.md",
     "package.json",
     "LICENSE"

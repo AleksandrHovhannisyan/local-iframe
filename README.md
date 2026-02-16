@@ -23,7 +23,12 @@ npm install local-iframe
 ```
 
 ```js
+// Option 1: simplest, auto-registers as <local-iframe>
 import "local-iframe";
+
+// Option 2: import the class, register it yourself, do whatever you want
+import { LocalIframe } from "local-iframe/LocalIframe";
+window.customElements.define("code-sandbox", LocalIframe);
 ```
 
 Or include it via CDN:
@@ -31,7 +36,7 @@ Or include it via CDN:
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/local-iframe@1.2.0/index.js"
+  src="https://cdn.jsdelivr.net/npm/local-iframe@1.2.0"
 ></script>
 ```
 
@@ -171,6 +176,8 @@ Optionally, you may render a custom `iframe`, and that will get used instead:
   <iframe style="border: solid 1px red"></iframe>
 </local-iframe>
 ```
+
+This allows you to set custom attributes on the iframe yourself.
 
 ### Recommended Styling
 
