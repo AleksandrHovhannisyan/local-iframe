@@ -40,19 +40,24 @@ Or include it via CDN:
 ></script>
 ```
 
-Then, render it in your document, and define all of the markup for the `iframe` inside a `<template>`:
+Then, render it in your document, and define all of the markup for the `iframe` inside a `<template>`. Here's a simple counter demo:
 
 ```html
 <local-iframe>
   <template>
-    <h1>Hello from the iframe</h1>
+    <button>Increment</button>
+    <div>Count: <output>0</output></div>
     <script>
-      console.log("Isolated scripts");
+      const button = document.querySelector("button");
+      const output = document.querySelector("output");
+      button.addEventListener("click", () => {
+        output.innerHTML = parseInt(output.innerHTML, 10) + 1;
+      });
     </script>
     <style>
-      /* This only affects the iframe */
-      body {
-        background-color: red;
+      button {
+        padding: 8px;
+        background-color: transparent;
       }
     </style>
   </template>
@@ -65,21 +70,26 @@ Then, render it in your document, and define all of the markup for the `iframe` 
 <local-iframe>
   <template><!-- omitted for brevity --></template>
   <iframe
-    srcdoc='&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;/head&gt;&lt;body&gt;
-    &lt;h1&gt;Hello from the iframe&lt;/h1&gt;
+    style="height: 100%; width: 100%; max-width: 100%;"
+    srcdoc='&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;&lt;/title&gt;&lt;/head&gt;&lt;body&gt;
+    &lt;button&gt;Increment&lt;/button&gt;
+    &lt;div&gt;Count: &lt;output&gt;0&lt;/output&gt;&lt;/div&gt;
     &lt;script&gt;
-      console.log("Isolated scripts");
+      const button = document.querySelector("button");
+      const output = document.querySelector("output");
+      button.addEventListener("click", () =&gt; {
+        output.innerHTML = parseInt(output.innerHTML, 10) + 1;
+      });
     &lt;/script&gt;
     &lt;style&gt;
-      /* This only affects the iframe */
-      body {
-        background-color: red;
+      button {
+        padding: 8px;
+        background-color: transparent;
       }
     &lt;/style&gt;
   &lt;/body&gt;&lt;/html&gt;'
-    style="height: 100%; width: 100%; max-width: 100%;"
-  ></iframe>
-</local-iframe>
+  ></iframe
+></local-iframe>
 ```
 
 All styles and scripts will only affect elements within the iframe itself.
@@ -107,12 +117,11 @@ There are two ways to define the markup for your iframe:
 
 ### 1. Child Template
 
-The simplest way to use `local-iframe` is to render a `<template>` as a child:
+As we've already seen, the simplest way to use `local-iframe` is to render a `<template>` as a child:
 
 ```html
-<local-iframe description="Hello world demo of a local iframe">
+<local-iframe description="Counter demo">
   <template>
-    <h1>Counter demo</h1>
     <button>Increment</button>
     <div>Count: <output>0</output></div>
     <script>
@@ -132,13 +141,12 @@ The simplest way to use `local-iframe` is to render a `<template>` as a child:
 </local-iframe>
 ```
 
-In this example, we render a counter inside an iframe and add some event listeners to make it interactive and some basic CSS to style it.
-
 ### 2. Template Attribute
 
-Alternatively, you can define an external `<template>` and reference it via the `template` attribute, like so:
+Alternatively, you can define a `<template>` elsewhere in the DOM and reference it by ID with the `template` attribute, like so:
 
 ```html
+<!-- This is what we want to render in the iframe -->
 <template id="my-template">
   <h1>Template</h1>
   <style>
@@ -147,6 +155,7 @@ Alternatively, you can define an external `<template>` and reference it via the 
     }
   </style>
 </template>
+<!-- Reference the ID of the template above with the `template` attribute -->
 <local-iframe
   template="my-template"
   description="External template demo"
