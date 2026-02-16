@@ -36,7 +36,7 @@ Or include it via CDN:
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/local-iframe@2.0.0"
+  src="https://cdn.jsdelivr.net/npm/local-iframe@2.0.1"
 ></script>
 ```
 
