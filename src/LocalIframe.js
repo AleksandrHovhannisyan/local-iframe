@@ -31,10 +31,10 @@ export class LocalIframe extends HTMLElement {
   
   /**
    * A description to set as the `title` attribute of the underlying `iframe`. 
-   * @returns {string|null}
+   * @returns {string}
    */
   get description() {
-    return this.#iframe.getAttribute("title");
+    return this.#iframe.getAttribute("title") ?? "";
   }
 
   /** @param {string} id */
@@ -74,7 +74,7 @@ export class LocalIframe extends HTMLElement {
       throw new Error("The element with the specified template ID is not a <template>.");
     }
 
-    this.#iframe.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${template.innerHTML}</body></html>`;
+    this.#iframe.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${this.description}</title></head><body>${template.innerHTML}</body></html>`;
 
     this.#shouldRenderOnAttributeChange = true;
   }
