@@ -1,7 +1,10 @@
 export class LocalIframe extends HTMLElement {
   static observedAttributes = ["description", "template"];
 
-  /** @type {HTMLIFrameElement} */
+  /**
+   * The inner `iframe` element into which the template content will be rendered.
+   * @type {HTMLIFrameElement}
+   */
   #iframe;
 
   /** Fix for double render on initial load when certain attributes are initialized that should also influence the rendering */
@@ -28,9 +31,9 @@ export class LocalIframe extends HTMLElement {
       this.#iframe.removeAttribute("title");
     }
   }
-  
+
   /**
-   * A description to set as the `title` attribute of the underlying `iframe`. 
+   * A description to set as the `title` attribute of the underlying `iframe`.
    * @returns {string}
    */
   get description() {
@@ -55,9 +58,40 @@ export class LocalIframe extends HTMLElement {
       this.#render();
     }
 
-    if (name === 'description') {
+    if (name === "description") {
       this.description = newValue;
     }
+  }
+
+  /**
+   * Returns an HTML string that will eventually get set on the underlying `iframe.srcdoc` attribute.
+   * You can extend `LocalIframe` and override this method to customize the rendering. This is useful if
+   * you want all of your `iframe` elements to have some shared markup or common structure that you don't
+   * want to duplicate across all of your `<template>`s.
+   * @param {string} templateHtml The parsed inner HTML of the `<template>`, which you should render into the `iframe` in some way.
+   * @returns {string}
+   * @example
+   * ```js
+   * // customize the rendering behavior
+   * class CodeDemo extends LocalIframe {
+   *  _render(templateHtml) {
+   *     return `<!DOCTYPE html>
+   *     <html>
+   *      <head><meta charset="utf-8"></head>
+   *      <body>
+   *      ${templateHtml}
+   *      <p>Created with the CodeDemo component</p>
+   *      </body>
+   *     </html>`;
+   *   }
+   * }
+   * 
+   * // register our new component
+   * window.customElements.define("code-demo", CodeDemo);
+   * ```
+   */
+  _render(templateHtml) {
+    return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${this.description}</title></head><body>${templateHtml}</body></html>`;
   }
 
   #render() {
@@ -71,11 +105,12 @@ export class LocalIframe extends HTMLElement {
       throw new Error("No <template> found for local-iframe element.");
     }
     if (!(template instanceof HTMLTemplateElement)) {
-      throw new Error("The element with the specified template ID is not a <template>.");
+      throw new Error(
+        "The element with the specified template ID is not a <template>.",
+      );
     }
 
-    this.#iframe.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${this.description}</title></head><body>${template.innerHTML}</body></html>`;
-
+    this.#iframe.srcdoc = this._render(template.innerHTML);
     this.#shouldRenderOnAttributeChange = true;
   }
 

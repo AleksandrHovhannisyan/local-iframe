@@ -1,17 +1,21 @@
-# `local-iframe`
+# `local-iframe` <!-- omit in toc -->
 
 > Web component that allows you to render local code sandboxes using iframes and HTML templates.
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
 - [Getting Started](#getting-started)
 - [Use Cases](#use-cases)
 - [Example Usage](#example-usage)
-  - [1. Child Template](#1-child-template)
-  - [2. Template Attribute](#2-template-attribute)
-  - [Custom iframe](#custom-iframe)
+  - [Rendering the `iframe` Content](#rendering-the-iframe-content)
+    - [Option 1: Child `<template>`](#option-1-child-template)
+    - [Option 2: `template` Attribute](#option-2-template-attribute)
+  - [Providing a Custom `iframe`](#providing-a-custom-iframe)
+  - [Advanced: Overriding `iframe.srcdoc`](#advanced-overriding-iframesrcdoc)
   - [Recommended Styling](#recommended-styling)
 - [API](#api)
+  - [Attributes and Properties](#attributes-and-properties)
+  - [Methods](#methods)
 - [Local Development](#local-development)
 
 ## Getting Started
@@ -110,12 +114,14 @@ Instead, `local-iframe` uses the [`HTMLIFrameElement.srcdoc`](https://developer.
 
 ## Example Usage
 
+### Rendering the `iframe` Content
+
 There are two ways to define the markup for your iframe:
 
 1. Render a `<template>` as a child of `<local-iframe>`.
 2. Render a `<template>` elsewhere in the DOM and reference it by ID.
 
-### 1. Child Template
+#### Option 1: Child `<template>`
 
 As we've already seen, the simplest way to use `local-iframe` is to render a `<template>` as a child:
 
@@ -141,7 +147,7 @@ As we've already seen, the simplest way to use `local-iframe` is to render a `<t
 </local-iframe>
 ```
 
-### 2. Template Attribute
+#### Option 2: `template` Attribute
 
 Alternatively, you can define a `<template>` elsewhere in the DOM and reference it by ID with the `template` attribute, like so:
 
@@ -164,9 +170,9 @@ Alternatively, you can define a `<template>` elsewhere in the DOM and reference 
 
 If you change the `template` attribute, the underlying iframe will re-render with the new markup.
 
-### Custom `iframe`
+### Providing a Custom `iframe`
 
-By default, `local-iframe` appends an `iframe` to its subtree:
+By default, `local-iframe` appends an `iframe` to its subtree if one does not already exist:
 
 ```html
 <local-iframe>
@@ -176,7 +182,7 @@ By default, `local-iframe` appends an `iframe` to its subtree:
 </local-iframe>
 ```
 
-Optionally, you may render a custom `iframe`, and that will get used instead:
+Optionally, you may provide a custom `iframe` as a child, and that will get used instead:
 
 ```html
 <local-iframe>
@@ -186,7 +192,55 @@ Optionally, you may render a custom `iframe`, and that will get used instead:
 </local-iframe>
 ```
 
-This allows you to set custom attributes on the iframe yourself.
+This allows you to set custom attributes on the `iframe` yourself, without having to forward them via a bloated API.
+
+### Advanced: Overriding `iframe.srcdoc`
+
+By default, `LocalIframe` renders an inner `iframe` whose `srcdoc` is the following barebones HTML document:
+
+```js
+_render(templateHtml) {
+  return `<!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <title>${this.description}</title>
+  </head>
+  <body>${templateHtml}</body>
+  </html>`;
+}
+```
+
+However, if you want to render a custom document that will be shared by all iframes, you can:
+
+1. Subclass `LocalIframe`,
+2. Override the `_render` method, and
+3. Register it as a new custom element.
+
+Like this:
+
+```js
+import { LocalIframe } from 'local-iframe/LocalIframe';
+
+class CodeDemo extends LocalIframe {
+  _render(templateHtml) {
+    return `<!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8">
+      <title>${this.description}</title>
+      <style>body { background-color: red }</style>
+    </head>
+    <body>
+      ${templateHtml}
+      <p>Brought to you by CodeDemo</p>
+    </body></html>`;
+  }
+}
+
+window.customElements.define("code-demo", CodeDemo);
+```
+
+This way, you don't need to duplicate the shared markup across all of your `<template>`s.
 
 ### Recommended Styling
 
@@ -221,10 +275,18 @@ local-iframe {
 
 ## API
 
+### Attributes and Properties
+
 | Attribute     | Type     | Description                                                                      |
 | ------------- | -------- | -------------------------------------------------------------------------------- |
 | `template`    | `string` | The ID of the `<template>` element to use for the underlying `iframe`'s content. |
 | `description` | `string` | A `title` to set on the underlying `iframe`, for improved accessibility.         |
+
+### Methods
+
+| Method    | Type                       | Description                                                                                                                                                                                                      |
+| --------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_render` | `(html: string) => string` | Method on `LocalIframe` that takes the incoming template HTML and returns an HTML string to set on the underlying `iframe.srcdoc` attribute. You can override this method in subclasses to define your own HTML. |
 
 ## Local Development
 

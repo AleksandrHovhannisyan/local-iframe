@@ -2,6 +2,7 @@
 <html>
   <head>
     <script type="module" src="./src/index.js"></script>
+    <script type="module" src="./src/CodeDemo.js"></script>
     <style>
       local-iframe {
         display: block;
@@ -28,6 +29,11 @@
       </style>
     </template>
     <h1><code>local-iframe</code> web component</h1>
+    <code-demo>
+      <template>
+        <h1>testing</h1>
+      </template>
+    </code-demo>
     <local-iframe description="Local iframe with custom iframe" template="template-1" style="width: 800px; height: 200px">
       <iframe style="border: 5px solid green;"></iframe>
     </local-iframe>
