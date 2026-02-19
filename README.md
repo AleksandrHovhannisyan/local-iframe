@@ -40,7 +40,7 @@ Or include it via CDN as an ES Module:
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/local-iframe@2.0.2/+esm"
+  src="https://cdn.jsdelivr.net/npm/local-iframe@2.1.0/+esm"
 ></script>
 ```
 
