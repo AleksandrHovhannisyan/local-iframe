@@ -1,14 +1,49 @@
 export class LocalIframe extends HTMLElement {
-  static observedAttributes = ["description", "template"];
+  static observedAttributes = ["description", "template"] as const;
 
   /**
-   * The inner `iframe` element into which the template content will be rendered.
-   * @type {HTMLIFrameElement}
+   * The inner `<iframe>` element into which the template content will be rendered.
    */
-  #iframe;
+  #iframe: HTMLIFrameElement;
 
   /** Fix for double render on initial load when certain attributes are initialized that should also influence the rendering */
   #shouldRenderOnAttributeChange = false;
+
+  /**
+   * A description to set as the `title` attribute of the underlying `<iframe>`,
+   * as well as in the `<title>` tag in the iframe's document `<head>`.
+   */
+  set description(description: string) {
+    if (description) {
+      this.#iframe.setAttribute("title", description);
+    } else {
+      this.#iframe.removeAttribute("title");
+    }
+  }
+
+  /**
+   * A description to set as the `title` attribute of the underlying `<iframe>`,
+   * as well as in the `<title>` tag in the iframe's document `<head>`.
+   */
+  get description(): string {
+    return this.#iframe.getAttribute("title") ?? "";
+  }
+
+  /**
+   * (Optional) The ID of an external template to use as the source content of the underlying `<iframe>`.
+   * If not specified, the component will default to querying for a `<template>` element in its subtree.
+   */
+  set template(id: string) {
+    this.setAttribute("template", id);
+  }
+
+  /**
+   * (Optional) The ID of an external template to use as the source content of the underlying `<iframe>`.
+   * If not specified, the component will default to querying for a `<template>` element in its subtree.
+   */
+  get template(): string | null {
+    return this.getAttribute("template");
+  }
 
   constructor() {
     super();
@@ -23,53 +58,29 @@ export class LocalIframe extends HTMLElement {
     }
   }
 
-  /** @param {string} description */
-  set description(description) {
-    if (description) {
-      this.#iframe.setAttribute("title", description);
-    } else {
-      this.#iframe.removeAttribute("title");
-    }
+  connectedCallback() {
+    this.#render();
   }
 
-  /**
-   * A description to set as the `title` attribute of the underlying `iframe`.
-   * @returns {string}
-   */
-  get description() {
-    return this.#iframe.getAttribute("title") ?? "";
-  }
-
-  /** @param {string} id */
-  set template(id) {
-    this.setAttribute("template", id);
-  }
-
-  /**
-   * The ID of the template to use as the source content of the underlying `iframe`.
-   * @returns {string|null}
-   */
-  get template() {
-    return this.getAttribute("template");
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(
+    name: (typeof LocalIframe.observedAttributes)[number],
+    oldValue: string | null,
+    newValue: string | null,
+  ) {
     if (name === "template" && this.#shouldRenderOnAttributeChange) {
       this.#render();
     }
 
     if (name === "description") {
-      this.description = newValue;
+      this.description = newValue ?? "";
     }
   }
 
   /**
    * Returns an HTML string that will eventually get set on the underlying `iframe.srcdoc` attribute.
    * You can extend `LocalIframe` and override this method to customize the rendering. This is useful if
-   * you want all of your `iframe` elements to have some shared markup or common structure that you don't
+   * you want all of your `<iframe>` elements to have some shared markup or common structure that you don't
    * want to duplicate across all of your `<template>`s.
-   * @param {string} templateHtml The parsed inner HTML of the `<template>`, which you should render into the `iframe` in some way.
-   * @returns {string}
    * @example
    * ```js
    * // customize the rendering behavior
@@ -85,17 +96,20 @@ export class LocalIframe extends HTMLElement {
    *     </html>`;
    *   }
    * }
-   * 
+   *
    * // register our new component
    * window.customElements.define("code-demo", CodeDemo);
    * ```
    */
-  _render(templateHtml) {
+  protected _render(templateHtml: string): string {
     return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${this.description}</title></head><body>${templateHtml}</body></html>`;
   }
 
+  /**
+   * Private render method that takes the template content and dumps it into the inner `<iframe>`.
+   */
   #render() {
-    const templateId = this.getAttribute("template");
+    const templateId = this.template;
 
     const template = templateId
       ? document.getElementById(templateId)
@@ -104,6 +118,7 @@ export class LocalIframe extends HTMLElement {
     if (!template) {
       throw new Error("No <template> found for local-iframe element.");
     }
+
     if (!(template instanceof HTMLTemplateElement)) {
       throw new Error(
         "The element with the specified template ID is not a <template>.",
@@ -112,9 +127,5 @@ export class LocalIframe extends HTMLElement {
 
     this.#iframe.srcdoc = this._render(template.innerHTML);
     this.#shouldRenderOnAttributeChange = true;
-  }
-
-  connectedCallback() {
-    this.#render();
   }
 }

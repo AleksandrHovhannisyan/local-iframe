@@ -2,10 +2,16 @@
   "name": "local-iframe",
   "version": "2.1.0",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./src/index.js",
-    "./LocalIframe": "./src/LocalIframe.js"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./LocalIframe": {
+      "import": "./dist/LocalIframe.js",
+      "types": "./dist/LocalIframe.d.ts"
+    }
   },
   "description": "Web component that allows you to render local code sandboxes using iframes and HTML templates.",
   "keywords": [
@@ -14,8 +20,7 @@
     "code demo"
   ],
   "files": [
-    "./src/index.js",
-    "./src/LocalIframe.js",
+    "dist",
     "README.md",
     "package.json",
     "LICENSE"
@@ -31,9 +36,19 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "vite"
+    "lint": "eslint",
+    "dev": "vite",
+    "build": "pnpm run lint && rm -rf dist && tsc",
+    "release": "pnpm run build && npm login && npm publish"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "globals": "^17.3.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.0",
     "vite": "^6.0.0"
   },
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"

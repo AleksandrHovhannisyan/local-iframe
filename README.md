@@ -5,7 +5,7 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Getting Started](#getting-started)
-- [Use Cases](#use-cases)
+- [Use Cases and Motivation](#use-cases-and-motivation)
 - [Example Usage](#example-usage)
   - [Rendering the `iframe` Content](#rendering-the-iframe-content)
     - [Option 1: Child `<template>`](#option-1-child-template)
@@ -17,6 +17,7 @@
   - [Attributes and Properties](#attributes-and-properties)
   - [Methods](#methods)
 - [Local Development](#local-development)
+- [FAQs](#faqs)
 
 ## Getting Started
 
@@ -100,9 +101,11 @@ All styles and scripts will only affect elements within the iframe itself.
 
 See [example usage](#example-usage).
 
-## Use Cases
+## Use Cases and Motivation
 
-When writing web development tutorials, I sometimes want to allow my readers to interact with code demos or see some output. It's easy to do this with a service like Codepen, but I don't like the idea of having to maintain my code demos outside my blog on a third-party website and then embedding them in my Markdown, which often loads a lot of extra JavaScript that I don't need.
+When writing web development tutorials, I sometimes want to allow my readers to interact with code demos or see live output, rather than just sharing screenshots and code samples. Some of the best examples of this are in my article on [JavaScript events](https://www.aleksandrhovhannisyan.com/blog/interactive-guide-to-javascript-events/), where readers can click buttons to see events get logged to the console. All of the demos are fully isolated from each other, which greatly simplifies the content authoring experience for me.
+
+It's easy to do this with a service like Codepen, but I don't like the idea of having to maintain my code demos outside my blog on a third-party website and then embedding them in my Markdown, which often loads a lot of extra JavaScript that I don't need.
 
 Instead, `local-iframe` uses the [`HTMLIFrameElement.srcdoc`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/srcdoc) attribute to create a fully self-contained `iframe` based on whatever code you give it, right there in your page. What you see is what you get.
 
@@ -240,7 +243,11 @@ class CodeDemo extends LocalIframe {
 window.customElements.define("code-demo", CodeDemo);
 ```
 
+As expected, your custom class will inherit all public/protected properties, attributes, and methods from `LocalIframe`.
+
 This way, you don't need to duplicate the shared markup across all of your `<template>`s.
+
+You can also create as many custom variants as you want using this pattern.
 
 ### Recommended Styling
 
@@ -294,3 +301,23 @@ local-iframe {
 2. Run `pnpm install` to install dev dependencies (Vite).
 3. Run `pnpm run dev` to start the local dev server.
 4. Open http://localhost:5173 in your browser.
+
+## FAQs
+
+<details open>
+<summary>Why not just render a regular <code>iframe</code> yourself and set its <code>srcdoc</code>? Why is this needed?</summary>
+
+Sure, nothing is stopping you from doing this:
+
+```html
+<iframe srcdoc="<!DOCTYPE html>..."></iframe>
+```
+
+But this is inconvenient for several reasons:
+
+- You have to escape special characters like `<`, `>`, `"`, and `'` yourself.
+- You lose syntax highlighting and intellisense/autocomplete and it's harder to read.
+- You have to repeat the common document structure every time.
+
+`local-iframe` allows you to write the `srcdoc` as regular HTML, but inside a `<template>` so that it never runs in the page context. It's basically a helper/decorator web component.
+</details>
