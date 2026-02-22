@@ -309,7 +309,7 @@ To force the outer `local-iframe` element's height to match the height of the in
 
 ### Attributes and Properties
 
-> [!NOTE]
+> [!TIP]
 > You may either set attributes via HTML or programmatically in JavaScript. `LocalIframe` provides typed getter/setter properties for each attribute listed in the table below. For example:
 > 
 > ```js
