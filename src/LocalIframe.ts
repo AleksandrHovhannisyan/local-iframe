@@ -47,6 +47,12 @@ export class LocalIframe extends HTMLElement {
 
   constructor() {
     super();
+    // NOTE: Normally, it's not safe to query light DOM children in the constructor of a web component
+    // because of a rare race condition: If you register your custom element via window.customElements.define
+    // BEFORE the DOM is parsed (e.g., in an inline script in the <head>), the constructors will run as soon
+    // as the browser encounters a <local-iframe>, but before the <local-iframe>'s light DOM has been parsed.
+    // But since this is an npm package and you must use type="module" scripts/`defer` to import it, the custom
+    // element won't be registered until AFTER the DOM is fully parsed, so it's safe to query the light DOM.
     const existingIframe = this.querySelector("iframe");
     this.#iframe = existingIframe ?? document.createElement("iframe");
     // Ensure the iframe fills the host element
