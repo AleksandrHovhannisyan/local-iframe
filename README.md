@@ -6,13 +6,14 @@
 
 - [Getting Started](#getting-started)
 - [Use Cases and Motivation](#use-cases-and-motivation)
-- [Example Usage](#example-usage)
+- [Examples and Usage Patterns](#examples-and-usage-patterns)
   - [Rendering the `iframe` Content](#rendering-the-iframe-content)
     - [Option 1: Child `<template>`](#option-1-child-template)
     - [Option 2: `template` Attribute](#option-2-template-attribute)
   - [Providing a Custom `iframe`](#providing-a-custom-iframe)
   - [Advanced: Overriding `iframe.srcdoc`](#advanced-overriding-iframesrcdoc)
-  - [Recommended Styling](#recommended-styling)
+  - [Minimize Layout Shifts on Load](#minimize-layout-shifts-on-load)
+  - [Fit to Content](#fit-to-content)
 - [API](#api)
   - [Attributes and Properties](#attributes-and-properties)
   - [Methods](#methods)
@@ -99,7 +100,7 @@ Then, render it in your document, and define all of the markup for the `iframe` 
 
 All styles and scripts will only affect elements within the iframe itself.
 
-See [example usage](#example-usage).
+See [examples and usage patterns](#examples-and-usage-patterns).
 
 ## Use Cases and Motivation
 
@@ -115,7 +116,7 @@ Instead, `local-iframe` uses the [`HTMLIFrameElement.srcdoc`](https://developer.
 > [!TIP]
 > See also: ["Building HTML, CSS, and JS code preview using iframe's srcdoc attribute"](https://mionskowski.pl/posts/iframe-code-preview/) by Maciej Mionskowski, which is what originally inspired me to poke around and see how far I could take this idea.
 
-## Example Usage
+## Examples and Usage Patterns
 
 ### Rendering the `iframe` Content
 
@@ -249,7 +250,7 @@ This way, you don't need to duplicate the shared markup across all of your `<tem
 
 You can also create as many custom variants as you want using this pattern.
 
-### Recommended Styling
+### Minimize Layout Shifts on Load
 
 Frames will be initially empty until their content is hydrated. This can cause unwanted vertical layout shifts as the page loads. To fix this, you can reserve an explicit `height` on each frame with inline styles:
 
@@ -280,14 +281,55 @@ local-iframe {
 }
 ```
 
+### Fit to Content
+
+To force the outer `local-iframe` element's height to match the height of the inner iframe content, set the `fit-content` attribute:
+
+```html
+<local-iframe fit-content>
+  <template>
+    <p>Really</p>
+    <p>long</p>
+    <p>content</p>
+    <p>that</p>
+    <p>forces</p>
+    <p>the inner iframe</p>
+    <p>to scroll.</p>
+    <p>But since fit-content is set,</p>
+    <p>this local-iframe will resize itself</p>
+    <p>to match the inner iframe's height.</p>
+  </template>
+</local-iframe>
+```
+
+> [!NOTE]
+> If you also set an inline height on `local-iframe` like `style="height: 200px"`, the `fit-content` attribute will always have the final say. If you later remove the `fit-content` attribute, the element will return to the previous height that you set, or `auto` if one was not previously set.
+
 ## API
 
 ### Attributes and Properties
 
-| Attribute     | Type     | Description                                                                      |
-| ------------- | -------- | -------------------------------------------------------------------------------- |
-| `template`    | `string` | The ID of the `<template>` element to use for the underlying `iframe`'s content. |
-| `description` | `string` | A `title` to set on the underlying `iframe`, for improved accessibility.         |
+> [!NOTE]
+> You may either set attributes via HTML or programmatically in JavaScript. `LocalIframe` provides typed getter/setter properties for each attribute listed in the table below. For example:
+> 
+> ```js
+> // these are equivalent
+> localIframe.fitContent = true;
+> localIframe.setAttribute("fit-content", "");
+>
+> // and so are these
+> localIframe.fitContent = false;
+> localIframe.removeAttribute("fit-content");
+>```
+>
+> Any attributes of type `boolean` are treated as `false` by default, and the presence of the value is all that matters in your HTML.
+
+
+| Attribute     | Type      | Description                                                                                                          |
+| ------------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
+| `template`    | `string`  | The ID of the `<template>` element to use for the underlying `iframe`'s content.                                     |
+| `description` | `string`  | A `title` to set on the underlying `iframe`, for improved accessibility.                                             |
+| `fit-content` | `boolean` | If this attribute is set, the element will size its height to match the height of the inner iframe document content. |
 
 ### Methods
 

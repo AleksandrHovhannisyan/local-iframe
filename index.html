@@ -108,6 +108,28 @@
         </style>
       </template>
     </local-iframe>
+    <local-iframe id="fit-content" fit-content style="height: 200px">
+      <template>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+        <p>Lots of content</p>
+      </template>
+    </local-iframe>
     <p>Paragraph from outer document!</p>
     <p>Paragraph from outer document!</p>
     <p>Paragraph from outer document!</p>
@@ -117,11 +139,15 @@
     <p>Paragraph from outer document!</p>
     <p>Paragraph from outer document!</p>
     <script>
-      const frame = document.querySelector("#dynamic-frame");
+      const dynamicFrame = document.querySelector("#dynamic-frame");
       setInterval(() => {
-        frame.template =
-          frame.template === "template-1" ? "template-2" : "template-1";
-          frame.description = `Frame demo for ${frame.template}`;
+        dynamicFrame.template =
+        dynamicFrame.template === "template-1" ? "template-2" : "template-1";
+        dynamicFrame.description = `Frame demo for ${dynamicFrame.template}`;
+      }, 1000);
+      const fitContentFrame = document.querySelector('#fit-content');
+      setInterval(() => {
+        fitContentFrame.toggleAttribute("fit-content");
       }, 1000);
     </script>
   </body>

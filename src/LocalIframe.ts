@@ -1,5 +1,9 @@
 export class LocalIframe extends HTMLElement {
-  static observedAttributes = ["description", "template"] as const;
+  static observedAttributes = [
+    "description",
+    "template",
+    "fit-content",
+  ] as const;
 
   /**
    * The inner `<iframe>` element into which the template content will be rendered.
@@ -8,6 +12,9 @@ export class LocalIframe extends HTMLElement {
 
   /** Fix for double render on initial load when certain attributes are initialized that should also influence the rendering */
   #shouldRenderOnAttributeChange = false;
+
+  /** The CSS `height` property value to fall back to if an explicit one is not set, or if `fit-content` is removed. */
+  #fallbackHeight = "auto";
 
   /**
    * A description to set as the `title` attribute of the underlying `<iframe>`,
@@ -45,8 +52,23 @@ export class LocalIframe extends HTMLElement {
     return this.getAttribute("template");
   }
 
+  /**
+   * Whether to resize this element's height to match the height of the inner iframe's document content, eliminating scroll.
+   */
+  set fitContent(shouldFit: boolean) {
+    this.toggleAttribute("fit-content", shouldFit);
+  }
+
+  /**
+   * Whether to resize this element's height to match the height of the inner iframe's document content, eliminating scroll.
+   */
+  get fitContent(): boolean {
+    return this.getAttribute("fit-content") !== null;
+  }
+
   constructor() {
     super();
+    this.#fallbackHeight = this.style.height || "auto";
     // NOTE: Normally, it's not safe to query light DOM children in the constructor of a web component
     // because of a rare race condition: If you register your custom element via window.customElements.define
     // BEFORE the DOM is parsed (e.g., in an inline script in the <head>), the constructors will run as soon
@@ -79,6 +101,22 @@ export class LocalIframe extends HTMLElement {
 
     if (name === "description") {
       this.description = newValue ?? "";
+    }
+
+    if (name === "fit-content") {
+      // Attribute removed, fall back to old height (if it was ever set) or auto
+      if (newValue === null) {
+        this.style.height = this.#fallbackHeight;
+      } else if (this.#iframe.contentDocument?.readyState === "complete") {
+        this.#matchIframeHeight();
+      } else {
+        this.#iframe.addEventListener(
+          "load",
+          () => this.#matchIframeHeight(),
+          // auto cleanup
+          { once: true },
+        );
+      }
     }
   }
 
@@ -133,5 +171,14 @@ export class LocalIframe extends HTMLElement {
 
     this.#iframe.srcdoc = this._render(template.innerHTML);
     this.#shouldRenderOnAttributeChange = true;
+  }
+
+  /**
+   * Resizes this element to match the height of the inner iframe content document.
+   */
+  #matchIframeHeight() {
+    const iframeHeight =
+      this.#iframe.contentDocument?.documentElement.scrollHeight;
+    this.style.height = iframeHeight ? `${iframeHeight}px` : "auto";
   }
 }
