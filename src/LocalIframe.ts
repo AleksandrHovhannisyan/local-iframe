@@ -16,6 +16,9 @@ export class LocalIframe extends HTMLElement {
   /** The CSS `height` property value to fall back to if an explicit one is not set, or if `fit-content` is removed. */
   #fallbackHeight = "auto";
 
+  /** Listens for resize events on the underlying iframe document */
+  #resizeObserver: ResizeObserver | null = null;
+
   /**
    * A description to set as the `title` attribute of the underlying `<iframe>`,
    * as well as in the `<title>` tag in the iframe's document `<head>`.
@@ -90,6 +93,10 @@ export class LocalIframe extends HTMLElement {
     this.#render();
   }
 
+  disconnectedCallback() {
+    this.#unobserveIframeResize();
+  }
+
   attributeChangedCallback(
     name: (typeof LocalIframe.observedAttributes)[number],
     oldValue: string | null,
@@ -104,15 +111,15 @@ export class LocalIframe extends HTMLElement {
     }
 
     if (name === "fit-content") {
-      // Attribute removed, fall back to old height (if it was ever set) or auto
+      // Attribute removed
       if (newValue === null) {
-        this.style.height = this.#fallbackHeight;
-      } else if (this.#iframe.contentDocument?.readyState === "complete") {
-        this.#matchIframeHeight();
+        this.#unobserveIframeResize();
+      } else if (this.#iframe.srcdoc) {
+        this.#observeIframeResize();
       } else {
         this.#iframe.addEventListener(
           "load",
-          () => this.#matchIframeHeight(),
+          () => this.#observeIframeResize(),
           // auto cleanup
           { once: true },
         );
@@ -176,9 +183,33 @@ export class LocalIframe extends HTMLElement {
   /**
    * Resizes this element to match the height of the inner iframe content document.
    */
-  #matchIframeHeight() {
-    const iframeHeight =
-      this.#iframe.contentDocument?.documentElement.scrollHeight;
-    this.style.height = iframeHeight ? `${iframeHeight}px` : "auto";
+  #observeIframeResize() {
+    const scrollingElement = this.#iframe.contentDocument?.scrollingElement;
+    if (!scrollingElement) {
+      console.warn("No scrollingElement detected on iframe, unable to resize");
+      return;
+    }
+    // Subscribe to resizes
+    if (!this.#resizeObserver) {
+      this.#resizeObserver = new ResizeObserver(() => {
+        this.#setHeight(scrollingElement.scrollHeight);
+      });
+      this.#resizeObserver.observe(scrollingElement);
+    }
+    // Initialize height to start, in case the frame was already fully sized prior to .observe()
+    this.#setHeight(scrollingElement.scrollHeight);
+  }
+
+  /** Stops listening to resize events on the inner iframe. */
+  #unobserveIframeResize() {
+    this.#resizeObserver?.disconnect();
+    this.#setHeight();
+  }
+
+  /** Sets this local-iframe component's height to the provided value.
+   * @param height A height to set. If not specified, uses the `fallbackHeight` read from inline styles, or `"auto"`.
+   */
+  #setHeight(height?: number | string) {
+    this.style.height = height ? `${height}px` : this.#fallbackHeight;
   }
 }

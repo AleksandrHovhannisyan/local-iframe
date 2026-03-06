@@ -224,7 +224,7 @@ However, if you want to render a custom document that will be shared by all ifra
 Like this:
 
 ```js
-import { LocalIframe } from 'local-iframe/LocalIframe';
+import { LocalIframe } from "local-iframe/LocalIframe";
 
 class CodeDemo extends LocalIframe {
   _render(templateHtml) {
@@ -311,7 +311,7 @@ To force the outer `local-iframe` element's height to match the height of the in
 
 > [!TIP]
 > You may either set attributes via HTML or programmatically in JavaScript. `LocalIframe` provides typed getter/setter properties for each attribute listed in the table below. For example:
-> 
+>
 > ```js
 > // these are equivalent
 > localIframe.fitContent = true;
@@ -320,16 +320,15 @@ To force the outer `local-iframe` element's height to match the height of the in
 > // and so are these
 > localIframe.fitContent = false;
 > localIframe.removeAttribute("fit-content");
->```
+> ```
 >
 > Any attributes of type `boolean` are treated as `false` by default, and the presence of the value is all that matters in your HTML.
 
-
-| Attribute     | Type      | Description                                                                                                          |
-| ------------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
-| `template`    | `string`  | The ID of the `<template>` element to use for the underlying `iframe`'s content.                                     |
-| `description` | `string`  | A `title` to set on the underlying `iframe`, for improved accessibility.                                             |
-| `fit-content` | `boolean` | If this attribute is set, the element will size its height to match the height of the inner iframe document content. |
+| Attribute     | Type      | Description                                                                                                                                    |
+| ------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `template`    | `string`  | The ID of the `<template>` element to use for the underlying `iframe`'s content.                                                               |
+| `description` | `string`  | A `title` to set on the underlying `iframe`, for improved accessibility.                                                                       |
+| `fit-content` | `boolean` | If this attribute is set, the element will size its height to match the height of the inner iframe document content and watch for any changes. |
 
 ### Methods
 
@@ -362,4 +361,5 @@ But this is inconvenient for several reasons:
 - You have to repeat the common document structure every time.
 
 `local-iframe` allows you to write the `srcdoc` as regular HTML, but inside a `<template>` so that it never runs in the page context. It's basically a helper/decorator web component.
+
 </details>

@@ -14,12 +14,13 @@
 
       class CodeDemo extends LocalIframe {
         _render(templateHtml) {
-          return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${this.description}</title><style>body { background-color: red }</style></head><body>${templateHtml}<p>Brought to you by CodeDemo</p></body></html>`;
+          return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${this.description}</title><style>body { background-color: yellow }</style></head><body>${templateHtml}<p>Brought to you by CodeDemo</p></body></html>`;
         }
       }
       window.customElements.define("code-demo", CodeDemo);
     </script>
   </head>
+
   <body>
     <template id="template-1">
       <h1>Template 1</h1>
@@ -38,78 +39,100 @@
       </style>
     </template>
     <h1><code>local-iframe</code> web component</h1>
-    <code-demo description="testing a subclassed component">
-      <template>
-        <h1>testing</h1>
-      </template>
-    </code-demo>
-    <local-iframe description="Local iframe with custom iframe" template="template-1" style="width: 800px; height: 200px">
-      <iframe style="border: 5px solid green;"></iframe>
-    </local-iframe>
-    </local-iframe>
-    <local-iframe
-      description="Dynamic iframe example"
-      template="template-1"
-      id="dynamic-frame"
-      style="width: 800px; height: 200px"
-    ></local-iframe>
-    <local-iframe
-      description="Static iframe example"
-      style="width: 800px; height: 400px"
-    >
-      <template>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Ruge+Boogie&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap"
-          rel="stylesheet"
-        />
-        <div><h1>Hello, world!</h1></div>
-        <p>I'm a completely local, isolated iframe!</p>
-        <script>
-          console.log("hi");
-        </script>
-        <script>
-          console.log(
-            "second console log in same iframe, but a second script tag",
-          );
-        </script>
-        <style>
-          body {
-            font-family: Ruge Boogie;
-            background-color: red;
-            font-size: 200%;
-          }
-        </style>
-      </template>
-    </local-iframe>
-    <local-iframe style="width: 800px; height: 200px">
-      <template>
-        <h1>Counter demo</h1>
-        <button>Increment</button>
-        <div>Count: <output>0</output></div>
-        <script>
-          const button = document.querySelector("button");
-          const output = document.querySelector("output");
-          button.addEventListener("click", () => {
-            output.innerHTML = parseInt(output.innerHTML, 10) + 1;
+    <section>
+      <h2 id="static">static demo</h2>
+      <local-iframe
+        description="Static iframe example"
+        style="width: 800px; height: 300px"
+      >
+        <template>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Ruge+Boogie&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap"
+            rel="stylesheet"
+          />
+          <div>
+            <h1>Hello, world!</h1>
+          </div>
+          <p>I'm a completely local, isolated iframe!</p>
+          <script>
+            console.log("hi");
+          </script>
+          <script>
+            console.log(
+              "second console log in same iframe, but a second script tag",
+            );
+          </script>
+          <style>
+            body {
+              font-family: Ruge Boogie;
+              background-color: pink;
+              font-size: 200%;
+            }
+          </style>
+        </template>
+      </local-iframe>
+    </section>
+    <section>
+      <h2 id="dynamic-template">
+        <code>template</code> attribute that changes
+      </h2>
+      <label>
+        Template
+        <select id="dynamic-template-select">
+          <option value="template-1">Template 1</option>
+          <option value="template-2">Template 2</option>
+        </select>
+      </label>
+      <local-iframe
+        fit-content
+        description="Dynamic iframe example"
+        template="template-1"
+        id="dynamic-frame"
+        style="width: 800px"
+      ></local-iframe>
+      <script>
+        const dynamicFrame = document.querySelector("#dynamic-frame");
+        document
+          .querySelector("#dynamic-template-select")
+          .addEventListener("input", (e) => {
+            dynamicFrame.template = e.target.value;
           });
-        </script>
-      </template>
-    </local-iframe>
-    <local-iframe style="width: 800px; height: 200px">
-      <template>
-        <h1>Another one! This one has a blue background.</h1>
-        <style>
-          body {
-            background-color: #0000a8;
-          }
-          h1 {
-            color: white;
-          }
-        </style>
-      </template>
-    </local-iframe>
-    <local-iframe id="fit-content" fit-content style="height: 200px">
-      <template>
+      </script>
+    </section>
+    <section>
+      <h2 id="counter">counter demo (interactivity)</h2>
+      <local-iframe style="width: 800px; height: 200px">
+        <template>
+          <h1>Counter demo</h1>
+          <button>Increment</button>
+          <div>Count: <output>0</output></div>
+          <script>
+            const button = document.querySelector("button");
+            const output = document.querySelector("output");
+            button.addEventListener("click", () => {
+              output.innerHTML = parseInt(output.innerHTML, 10) + 1;
+            });
+          </script>
+        </template>
+      </local-iframe>
+    </section>
+    <section>
+      <h2 id="custom-component">
+        custom component that extends <code>LocalIframe</code>
+      </h2>
+      <code-demo description="testing a subclassed component">
+        <template>
+          <h1>testing</h1>
+        </template>
+      </code-demo>
+    </section>
+    <section>
+      <h2 id="fit-content"><code>fit-content</code></h2>
+      <label>
+        Size to height of content
+        <input id="fit-content-input" type="checkbox" checked />
+      </label>
+      <template id="fit-content-template">
         <p>Lots of content</p>
         <p>Lots of content</p>
         <p>Lots of content</p>
@@ -129,26 +152,30 @@
         <p>Lots of content</p>
         <p>Lots of content</p>
       </template>
-    </local-iframe>
-    <p>Paragraph from outer document!</p>
-    <p>Paragraph from outer document!</p>
-    <p>Paragraph from outer document!</p>
-    <p>Paragraph from outer document!</p>
-    <p>Paragraph from outer document!</p>
-    <p>Paragraph from outer document!</p>
-    <p>Paragraph from outer document!</p>
-    <p>Paragraph from outer document!</p>
-    <script>
-      const dynamicFrame = document.querySelector("#dynamic-frame");
-      setInterval(() => {
-        dynamicFrame.template =
-        dynamicFrame.template === "template-1" ? "template-2" : "template-1";
-        dynamicFrame.description = `Frame demo for ${dynamicFrame.template}`;
-      }, 1000);
-      const fitContentFrame = document.querySelector('#fit-content');
-      setInterval(() => {
-        fitContentFrame.toggleAttribute("fit-content");
-      }, 1000);
-    </script>
+      <local-iframe
+        id="fit-content-frame"
+        template="fit-content-template"
+        fit-content
+        style="height: 200px"
+      ></local-iframe>
+      <script>
+        const fitContentFrame = document.querySelector("#fit-content-frame");
+        const fitContentInput = document.querySelector("#fit-content-input");
+        fitContentInput.addEventListener("input", () =>
+          fitContentFrame.toggleAttribute("fit-content"),
+        );
+      </script>
+    </section>
+    <section>
+      <h2>Placeholders to test layout shifts on page load</h2>
+      <p>Paragraph from outer document!</p>
+      <p>Paragraph from outer document!</p>
+      <p>Paragraph from outer document!</p>
+      <p>Paragraph from outer document!</p>
+      <p>Paragraph from outer document!</p>
+      <p>Paragraph from outer document!</p>
+      <p>Paragraph from outer document!</p>
+      <p>Paragraph from outer document!</p>
+    </section>
   </body>
 </html>
